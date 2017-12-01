@@ -1,5 +1,11 @@
 # loopback-status
-Health check helper for loopback datasources
+Health check helper for loopback datasources.
+
+### Description
+
+1. Verify that data is accessible by doing Count queries to the passed in models
+2. Cache the response of those counts for a predefined amount of time.
+3. Make sure the Count queries execute under a predefined amount of time
 
 ### Initialization
 
