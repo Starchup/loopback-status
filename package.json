@@ -1,0 +1,22 @@
+{
+    "name": "loopback-status",
+    "version": "0.0.1",
+    "description": "Health check helper for loopback datasources",
+    "main": "status.js",
+    "scripts":
+    {},
+    "repository":
+    {
+        "type": "git",
+        "url": "git+https://github.com/Starchup/loopback-status.git"
+    },
+    "keywords": [
+        "starchup"
+    ],
+    "author": "Starchup Inc",
+    "bugs":
+    {
+        "url": "https://github.com/Starchup/loopback-status/issues"
+    },
+    "homepage": "https://github.com/Starchup/loopback-status#readme"
+}
