@@ -1,6 +1,6 @@
 {
     "name": "loopback-status",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "description": "Health check helper for loopback datasources",
     "main": "status.js",
     "scripts":
