@@ -25,7 +25,7 @@ var status = function (config)
 
     self.healthStatus = function (callback)
     {
-        if (!self.models || !self.models.length) return callback(okStatus);
+        if (!self.models || !self.models.length) return callback(self.okStatus);
 
         if (self.cachedCount >= self.models.length) return callback(self.okStatus);
 
