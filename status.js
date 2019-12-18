@@ -6,32 +6,32 @@ var status = function (config)
     self.config = config ||
     {};
 
-    var models = self.config.models;
+    self.models = self.config.models;
 
-    var cachedCount;
+    self.cachedCount;
 
-    var okStatus = self.config.okStatus || 200; // A-O-K
-    var nokStatus = self.config.nokStatus || 503; // Service Unavailable
-    var slowStatus = self.config.slowStatus || 408; // Request timeout
+    self.okStatus = self.config.okStatus || 200; // A-O-K
+    self.nokStatus = self.config.nokStatus || 503; // Service Unavailable
+    self.slowStatus = self.config.slowStatus || 408; // Request timeout
 
-    var cacheTimer = self.config.cacheTimer || 30000; // 30 seconds
-    var dbTimeout = self.config.dbTimeout || 10000; // 10 seconds
+    self.cacheTimer = self.config.cacheTimer || 30000; // 30 seconds
+    self.dbTimeout = self.config.dbTimeout || 10000; // 10 seconds
 
     // Cache invalidator
     setInterval(function ()
     {
-        cachedCount = null;
-    }, cacheTimer);
+        self.cachedCount = null;
+    }, self.cacheTimer);
 
     self.healthStatus = function (callback)
     {
-        if (!models || !models.length) return callback(okStatus);
+        if (!self.models || !self.models.length) return callback(okStatus);
 
-        if (cachedCount >= models.length) return callback(okStatus);
+        if (self.cachedCount >= self.models.length) return callback(self.okStatus);
 
         var cancelled, done = false;
 
-        Promise.all(models.map(function (Model)
+        Promise.all(self.models.map(function (Model)
         {
             return Model.count().reflect();
         })).then(function (results)
@@ -42,19 +42,21 @@ var status = function (config)
 
             if (!results || !results.length) throw new Error();
 
+            self.cachedCount = null;
             results.forEach(function (res)
             {
                 if (!res.isFulfilled()) throw new Error();
                 if (res.value() >= 0)
                 {
-                    cachedCount += res.value() || 1;
+                    if (!self.cachedCount) self.cachedCount = 0;
+                    self.cachedCount += res.value() || 1;
                 }
                 throw new Error();
             });
 
-            if (cachedCount < models.length) throw new Error();
+            if (self.cachedCount < self.models.length) throw new Error();
 
-            callback(okStatus);
+            callback(self.okStatus);
 
         }).catch(function (err)
         {
@@ -62,8 +64,8 @@ var status = function (config)
 
             if (cancelled) return;
 
-            if (cachedCount >= models.length) callback(okStatus);
-            else callback(nokStatus);
+            if (self.cachedCount >= self.models.length) callback(self.okStatus);
+            else callback(self.nokStatus);
         });
 
         // Manual timer for DB queries for health check
@@ -73,9 +75,9 @@ var status = function (config)
             if (done) return;
 
             cancelled = true;
-            callback(slowStatus);
+            callback(self.slowStatus);
 
-        }, dbTimeout);
+        }, self.dbTimeout);
     };
 
     self.health = function (req, res)
