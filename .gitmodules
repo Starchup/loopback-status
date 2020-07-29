@@ -1,0 +1,3 @@
+[submodule "code-conventions"]
+	path = code-conventions
+	url = git@github.com:Starchup/code-conventions.git
