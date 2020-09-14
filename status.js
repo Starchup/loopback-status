@@ -20,11 +20,14 @@ var status = function (config)
     // Cache invalidator
     setInterval(function ()
     {
+        console.debug('loopback-status: invalidate cache');
         self.cachedCount = null;
     }, self.cacheTimer);
 
     self.healthStatus = function (callback)
     {
+        console.debug('loopback-status: check status');
+
         if (!self.models || !self.models.length) return callback(self.okStatus);
 
         if (self.cachedCount >= self.models.length) return callback(self.okStatus);
@@ -33,9 +36,12 @@ var status = function (config)
 
         Promise.all(self.models.map(function (Model)
         {
+            console.debug('loopback-status: checking count');
             return Model.count().reflect();
         })).then(function (results)
         {
+            console.debug('loopback-status: checking count succeed');
+
             done = true;
 
             if (cancelled) return;
@@ -60,6 +66,8 @@ var status = function (config)
 
         }).catch(function (err)
         {
+            console.debug('loopback-status: checking count error: ' + err.message);
+
             done = true;
 
             if (cancelled) return;
@@ -72,6 +80,8 @@ var status = function (config)
         // -- in order to get accurate info on when the service is slow
         setTimeout(function ()
         {
+            console.debug('loopback-status: db timeout');
+
             if (done) return;
 
             cancelled = true;
