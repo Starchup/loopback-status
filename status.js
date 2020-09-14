@@ -60,6 +60,8 @@ var status = function (config)
 
         }).catch(function (err)
         {
+            console.error(err);
+
             done = true;
 
             if (cancelled) return;
