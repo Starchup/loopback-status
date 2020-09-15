@@ -45,13 +45,12 @@ var status = function (config)
             self.cachedCount = null;
             results.forEach(function (res)
             {
-                if (!res.isFulfilled()) throw new Error();
-                if (res.value() >= 0)
+                if (res.isFulfilled() && res.value() >= 0)
                 {
                     if (!self.cachedCount) self.cachedCount = 0;
                     self.cachedCount += res.value() || 1;
                 }
-                throw new Error();
+                else throw new Error();
             });
 
             if (self.cachedCount < self.models.length) throw new Error();
@@ -60,8 +59,6 @@ var status = function (config)
 
         }).catch(function (err)
         {
-            console.error(err);
-
             done = true;
 
             if (cancelled) return;
