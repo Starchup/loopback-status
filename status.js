@@ -20,7 +20,7 @@ var status = function (config)
     // Cache invalidator
     setInterval(function ()
     {
-        self.cachedCount = null;
+        self.cachedCount = 0;
     }, self.cacheTimer);
 
     self.healthStatus = function (callback)
@@ -42,14 +42,11 @@ var status = function (config)
 
             if (!results || !results.length) throw new Error();
 
-            self.cachedCount = null;
+            self.cachedCount = 0;
             results.forEach(function (res)
             {
-                if (res.isFulfilled() && res.value() >= 0)
-                {
-                    if (!self.cachedCount) self.cachedCount = 0;
-                    self.cachedCount += res.value() || 1;
-                }
+                if (!res.isFulfilled()) throw new Error('DB not fulfilling requests');
+                else if (res.value() >= 0) self.cachedCount++;
                 else throw new Error();
             });
 
